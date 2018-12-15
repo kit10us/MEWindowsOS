@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="mewos\Debug.h">
+      <Filter>mewos</Filter>
+    </ClInclude>
+    <ClInclude Include="mewos\MEWindowsOS.h">
+      <Filter>mewos</Filter>
+    </ClInclude>
+    <ClInclude Include="mewos\WindowsOS.h">
+      <Filter>mewos</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="mewos">
+      <UniqueIdentifier>{a15cf890-8965-4f8a-87b5-cc4055226667}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mewos\Debug.cpp">
+      <Filter>mewos</Filter>
+    </ClCompile>
+    <ClCompile Include="mewos\WindowsOS.cpp">
+      <Filter>mewos</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
