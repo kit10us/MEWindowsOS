@@ -35,8 +35,8 @@ namespace mewos
 
 		me::game::IGame * GetGame() override;
 
-		me::os::IDebug * Debug() override;
-		const me::os::IDebug * Debug() const override;
+		me::debug::IDebug * Debug() override;
+		const me::debug::IDebug * Debug() const override;
 
 		void * Feed( std::string target, void * data ) override;
 
@@ -64,7 +64,7 @@ namespace mewos
 
 		LRESULT WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam );
 
-		rm::AssetPaths & GetAssetPaths() override;
+		rm::AssetPaths::ptr GetAssetPaths() override;
 
 		unify::Path GetProgramPath() const override;
 
@@ -72,7 +72,7 @@ namespace mewos
 
 	private:
 		me::game::IGame * m_game;
-		me::os::IDebug * m_debug;
+		me::debug::IDebug * m_debug;
 		me::render::IRendererFactory::ptr m_rendererFactory;
 		std::string m_name;
 		unify::Path m_programPath;
@@ -85,7 +85,7 @@ namespace mewos
 		std::vector< me::render::Display > m_pendingDisplays;
 		std::vector< me::render::IRenderer::ptr > m_renderers;
 		me::os::OSParameters m_osParameters;
-		rm::AssetPaths m_assetPaths;
+		rm::AssetPaths::ptr m_assetPaths;
 		HWND m_mainWindow;
 	};
 }

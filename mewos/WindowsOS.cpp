@@ -5,10 +5,10 @@
 
 #include <mewos/Debug.h>
 #include <mewos/WindowsOS.h>
-//#include <medx11/Renderer.h>
+#include <me/debug/Block.h>
+#include <me/exception/FailedToCreate.h>
 #include <unify/Exception.h>
 #include <unify/Path.h>
-#include <me/exception/FailedToCreate.h>
 #include <shellapi.h>
 
 //#include <medx11/DirectX.h>
@@ -23,7 +23,7 @@ using namespace mewos;
 
 WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::render::IRendererFactory::ptr rendererFactory )
 	: m_game( defaultOS.GetGame() )
-	, m_debug{ new mewos::Debug( dynamic_cast< me::os::DefaultDebug & >( *defaultOS.Debug() ) ) }
+	, m_debug{ new mewos::Debug( dynamic_cast< me::debug::DefaultDebug & >( *defaultOS.Debug() ) ) }
 	, m_rendererFactory{ rendererFactory }
 	, m_hasFocus{}
 	, m_keyboard{}
@@ -52,19 +52,18 @@ WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * eleme
 
 	// TODO: We are also doing this in Game, shouldn't this be in once place?
 	// Parse the commandline...
-	std::string commandLineString( m_osParameters.lpszCmdLine );
 	size_t l = 0;
 	size_t r = 0;
 	bool inQuote = false;
 	std::string working;
 
-	for( size_t l = 0, r = 0; r <= commandLineString.length(); ++r )
+	for( size_t l = 0, r = 0; r <= m_osParameters.cmdLine.length(); ++r )
 	{
-		if( !inQuote && ( r == commandLineString.length() || commandLineString.at( r ) == ' ' ) )
+		if( !inQuote && ( r == m_osParameters.cmdLine.length() || m_osParameters.cmdLine.at( r ) == ' ' ) )
 		{
 			if( l != r )
 			{
-				working += commandLineString.substr( l, r - l );
+				working += m_osParameters.cmdLine.substr( l, r - l );
 			}
 			if( working.empty() == false )
 			{
@@ -73,10 +72,10 @@ WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * eleme
 			}
 			l = r + 1;
 		}
-		else if( commandLineString.at( r ) == '\"' )
+		else if(m_osParameters.cmdLine.at( r ) == '\"' )
 		{
 			// Include partial string...
-			working += commandLineString.substr( l, r - l );
+			working += m_osParameters.cmdLine.substr( l, r - l );
 			l = r + 1; // One past the double quote.
 			inQuote = !inQuote;
 		}
@@ -120,12 +119,12 @@ me::game::IGame * WindowsOS::GetGame()
 	return m_game;
 }
 
-me::os::IDebug * WindowsOS::Debug()
+me::debug::IDebug * WindowsOS::Debug()
 {
 	return m_debug;
 }
 
-const me::os::IDebug * WindowsOS::Debug() const
+const me::debug::IDebug * WindowsOS::Debug() const
 {
 	return m_debug;
 }
@@ -281,6 +280,8 @@ void WindowsOS::BuildRenderers( std::string title )
 
 void WindowsOS::Startup()
 {
+	me::debug::Block block( Debug(), "OS Startup" );
+
 	auto keyboardItr = m_game->GetInputManager()->FindSource( "Keyboard" );
 	if( keyboardItr )
 	{
@@ -566,7 +567,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 	return DefWindowProc( handle, message, wParam, lParam );
 }
 
-rm::AssetPaths & WindowsOS::GetAssetPaths()
+rm::AssetPaths::ptr WindowsOS::GetAssetPaths()
 {
 	return m_assetPaths;
 }
