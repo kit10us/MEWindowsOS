@@ -29,7 +29,7 @@ namespace mewos
 	class WindowsOS : public me::os::IOS
 	{
 	public:
-		WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::render::IRendererFactory::ptr rendererFactory );
+		WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::os::OSParameters osParameters );
 
 		virtual ~WindowsOS();
 
@@ -43,6 +43,8 @@ namespace mewos
 		std::string GetName() const override;
 
 		std::vector< std::string > GetCommandLine() const override;
+
+		void SetRenderFactory( me::render::IRendererFactory::ptr renderFactory ) override;
 
 		void AddDisplay( me::render::Display display );
 		void CreatePendingDisplays( std::string title );
@@ -70,8 +72,11 @@ namespace mewos
 
 		unify::Path GetRunPath() const override;
 
+		const me::os::OSParameters * GetOSParameters() const override;
+
 	private:
 		me::game::IGame * m_game;
+		me::os::OSParameters m_parameters;
 		me::debug::IDebug * m_debug;
 		me::render::IRendererFactory::ptr m_rendererFactory;
 		std::string m_name;

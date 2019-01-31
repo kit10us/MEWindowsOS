@@ -4,6 +4,7 @@
 #pragma once
 
 #include <mewos/MEWindowsOS.h>
+#include <me/os/IOS.h>
 #include <me/debug/DefaultDebug.h>
 #include <unify/Path.h>
 #include <list>
@@ -15,9 +16,10 @@ namespace mewos
 {
 	class Debug : public me::debug::DefaultDebug
 	{
+		me::os::IOS * m_os;
 		size_t m_flushedLogLines;
 	public:
-		Debug( me::debug::DefaultDebug & defaulDebug );
+		Debug( me::os::IOS * os, me::debug::DefaultDebug & defaulDebug );
 		virtual ~Debug();
 
 		void LogSectionLine( std::string section, std::string line ) override;

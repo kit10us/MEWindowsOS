@@ -21,14 +21,14 @@ using namespace mewos;
 #undef GetCommandLine
 #endif
 
-WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::render::IRendererFactory::ptr rendererFactory )
-	: m_game( defaultOS.GetGame() )
-	, m_debug{ new mewos::Debug( dynamic_cast< me::debug::DefaultDebug & >( *defaultOS.Debug() ) ) }
-	, m_rendererFactory{ rendererFactory }
+WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::os::OSParameters osParameters )
+	: m_debug{ new mewos::Debug( this, dynamic_cast< me::debug::DefaultDebug & >( *defaultOS.Debug() ) ) }
+	, m_game{ defaultOS.GetGame() }
+	, m_parameters{ osParameters }
 	, m_hasFocus{}
 	, m_keyboard{}
 	, m_mouse{}
-	, m_osParameters{ defaultOS.GetGame()->GetOSParameters() }
+	, m_osParameters{ osParameters }
 	, m_assetPaths{ defaultOS.GetAssetPaths() }
 {
 	{
@@ -146,6 +146,11 @@ std::vector< std::string > WindowsOS::GetCommandLine() const
 	return m_commandLine;
 }
 
+void WindowsOS::SetRenderFactory( me::render::IRendererFactory::ptr renderFactory )
+{
+	m_rendererFactory = renderFactory;
+}
+
 void WindowsOS::AddDisplay( render::Display display )
 {
 	m_pendingDisplays.push_back( display );
@@ -231,7 +236,7 @@ void WindowsOS::CreateDisplay( render::Display display, std::string title )
 		display.SetHandle( handle );
 	}
 
-	m_renderers.push_back( me::render::IRenderer::ptr{ m_rendererFactory->Produce( this, display, m_renderers.size() ) } );
+	m_renderers.push_back( me::render::IRenderer::ptr{ m_rendererFactory->Produce( display, m_renderers.size() ) } );
 }
 
 int WindowsOS::RendererCount() const
@@ -580,4 +585,9 @@ unify::Path WindowsOS::GetProgramPath() const
 unify::Path WindowsOS::GetRunPath() const
 {
 	return m_runPath;
+}
+
+const me::os::OSParameters * WindowsOS::GetOSParameters() const
+{
+	return &m_osParameters;
 }
