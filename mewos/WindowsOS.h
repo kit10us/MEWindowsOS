@@ -1,4 +1,4 @@
-// Copyright (c) 2002 - 2018, Evil Quail LLC
+// Copyright (c) 2002 - 2018, Kit10 Studios LLC
 // All Rights Reserved
 
 #pragma once
@@ -40,10 +40,6 @@ namespace mewos
 
 		void * Feed( std::string target, void * data ) override;
 
-		std::string GetName() const override;
-
-		std::vector< std::string > GetCommandLine() const override;
-
 		void SetRenderFactory( me::render::IRendererFactory::ptr renderFactory ) override;
 
 		void AddDisplay( me::render::Display display );
@@ -68,21 +64,13 @@ namespace mewos
 
 		rm::AssetPaths::ptr GetAssetPaths() override;
 
-		unify::Path GetProgramPath() const override;
-
-		unify::Path GetRunPath() const override;
-
 		const me::os::OSParameters * GetOSParameters() const override;
 
 	private:
 		me::game::IGame * m_game;
-		me::os::OSParameters m_parameters;
 		me::debug::IDebug * m_debug;
 		me::render::IRendererFactory::ptr m_rendererFactory;
 		std::string m_name;
-		unify::Path m_programPath;
-		unify::Path m_runPath;
-		std::vector< std::string > m_commandLine;
 		me::input::IInputDevice * m_keyboard;
 		me::input::IInputDevice * m_mouse;
 		bool m_hasFocus;

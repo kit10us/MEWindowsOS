@@ -1,4 +1,4 @@
-// Copyright (c) 2002 - 2018, Evil Quail LLC
+// Copyright (c) 2002 - 2018, Kit10 Studios LLC
 // All Rights Reserved
 
 #pragma once
@@ -24,63 +24,12 @@ using namespace mewos;
 WindowsOS::WindowsOS( me::os::DefaultOS & defaultOS, const qxml::Element * element, me::os::OSParameters osParameters )
 	: m_debug{ new mewos::Debug( this, dynamic_cast< me::debug::DefaultDebug & >( *defaultOS.Debug() ) ) }
 	, m_game{ defaultOS.GetGame() }
-	, m_parameters{ osParameters }
 	, m_hasFocus{}
 	, m_keyboard{}
 	, m_mouse{}
 	, m_osParameters{ osParameters }
 	, m_assetPaths{ defaultOS.GetAssetPaths() }
 {
-	{
-		using namespace std;
-		char buffer[MAX_PATH];
-		GetModuleFileNameA( NULL, buffer, MAX_PATH );
-		m_programPath = unify::Path( buffer );
-		m_programPath.Normalize();
-		string::size_type pos = string( buffer ).find_last_of( "\\/" );
-		if( pos != string::npos )
-		{
-			m_name = buffer;
-		}
-	}
-
-	{
-		char buffer[MAX_PATH];
-		GetCurrentDirectoryA( MAX_PATH, buffer );
-		m_runPath = unify::Path( std::string( buffer ) + "/" );
-	}
-
-	// TODO: We are also doing this in Game, shouldn't this be in once place?
-	// Parse the commandline...
-	size_t l = 0;
-	size_t r = 0;
-	bool inQuote = false;
-	std::string working;
-
-	for( size_t l = 0, r = 0; r <= m_osParameters.cmdLine.length(); ++r )
-	{
-		if( !inQuote && ( r == m_osParameters.cmdLine.length() || m_osParameters.cmdLine.at( r ) == ' ' ) )
-		{
-			if( l != r )
-			{
-				working += m_osParameters.cmdLine.substr( l, r - l );
-			}
-			if( working.empty() == false )
-			{
-				m_commandLine.push_back( working );
-				working.clear();
-			}
-			l = r + 1;
-		}
-		else if(m_osParameters.cmdLine.at( r ) == '\"' )
-		{
-			// Include partial string...
-			working += m_osParameters.cmdLine.substr( l, r - l );
-			l = r + 1; // One past the double quote.
-			inQuote = !inQuote;
-		}
-	}
-
 	// Load display setup...
 	for( auto && node : element->Children( "display" ) )
 	{
@@ -134,16 +83,6 @@ void * WindowsOS::Feed( std::string target, void * data )
 	os::win::OSFood * food = ( os::win::OSFood* )data;
 
 	return (void*)WndProc( (HWND)food->handle, (UINT)food->message, (WPARAM)food->wParam, (LPARAM)food->lParam );
-}
-
-std::string WindowsOS::GetName() const
-{
-	return m_name;
-}
-
-std::vector< std::string > WindowsOS::GetCommandLine() const
-{
-	return m_commandLine;
 }
 
 void WindowsOS::SetRenderFactory( me::render::IRendererFactory::ptr renderFactory )
@@ -266,14 +205,7 @@ HINSTANCE WindowsOS::GetHInstance() const
 
 HWND WindowsOS::GetHandle() const
 {
-	if( m_osParameters.hWnd )
-	{
-		return (HWND)m_osParameters.hWnd;
-	}
-	else
-	{
-		return (HWND)m_renderers[0]->GetDisplay().GetHandle();
-	}
+	return (HWND)m_renderers[0]->GetDisplay().GetHandle();
 }
 
 void WindowsOS::BuildRenderers( std::string title )
@@ -322,7 +254,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				//m_mouse->SetState( renderer, "MouseAvailable", "Available", false );
@@ -338,7 +270,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -358,7 +290,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -378,7 +310,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -398,7 +330,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -418,7 +350,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -438,7 +370,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::ButtonData * data = new input::ButtonData();
@@ -459,7 +391,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 		short zDelta = GET_WHEEL_DELTA_WPARAM( wParam );
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 				input::TrackerData * data = new input::TrackerData();
@@ -495,7 +427,7 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 
 		for( int renderer = 0; renderer < RendererCount(); ++renderer )
 		{
-			if( GetRenderer( renderer )->GetHandle() == handle )
+			if( GetRenderer( renderer )->GetDisplay().GetHandle() == handle )
 			{
 				trackingMouse = false;
 
@@ -575,16 +507,6 @@ LRESULT WindowsOS::WndProc( HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 rm::AssetPaths::ptr WindowsOS::GetAssetPaths()
 {
 	return m_assetPaths;
-}
-
-unify::Path WindowsOS::GetProgramPath() const
-{
-	return m_programPath;
-}
-
-unify::Path WindowsOS::GetRunPath() const
-{
-	return m_runPath;
 }
 
 const me::os::OSParameters * WindowsOS::GetOSParameters() const

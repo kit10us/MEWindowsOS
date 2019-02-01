@@ -1,10 +1,9 @@
-// Copyright (c) 2003 - 2011, Evil Quail LLC
+// Copyright (c) 2003 - 2011, Kit10 Studios LLC
 // All Rights Reserved
 
 #include <mewos/WindowsOS.h>
 #include <mewos/Debug.h>
 #include <unify/Exception.h>
-#include <me/exception/Exception.h>
 #include <Windows.h>
 #include <fstream>
 #include <cassert>
