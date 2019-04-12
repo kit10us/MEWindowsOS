@@ -11,13 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mewos\Debug.cpp" />
-    <ClCompile Include="mewos\WindowsOS.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="mewos\Debug.h" />
-    <ClInclude Include="mewos\MEWindowsOS.h" />
-    <ClInclude Include="mewos\WindowsOS.h" />
+    <ClInclude Include="mewos\IWindowsOS.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F6616D72-4655-4061-A9C1-75E5C8F7F4B4}</ProjectGuid>
