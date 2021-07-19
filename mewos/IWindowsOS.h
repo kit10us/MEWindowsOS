@@ -18,10 +18,6 @@
 #undef CreateWindow
 #endif
 
-#ifdef GetCommandLine
-#undef GetCommandLine
-#endif
-
 namespace mewos
 {
 	/// <summary>
